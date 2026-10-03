@@ -10,4 +10,5 @@
     <string name="link_blocked">Link blocked</string>
     <string name="no_app_for_link">No app can open this link</string>
     <string name="share_link">Share link</string>
+    <string name="page_crashed">The page crashed</string>
 </resources>

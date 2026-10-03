@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -80,19 +81,19 @@ class MainActivity : AppCompatActivity() {
         roleRequestButton = findViewById(R.id.role_request)
         roleSettingsButton = findViewById(R.id.role_settings)
 
-        val view = createWebView()
+        val view = attachWebView()
         if (view == null) {
             showWebViewMissing()
             return
         }
-        webView = view
-        findViewById<FrameLayout>(R.id.web_container).addView(view)
         onBackPressedDispatcher.addCallback(this, backCallback)
 
-        findViewById<EditText>(R.id.search_box).setOnEditorActionListener { box, actionId, _ ->
+        findViewById<EditText>(R.id.search_box).setOnEditorActionListener { box, actionId, event ->
+            // Hardware keyboards send Enter as IME_NULL with a key event instead of IME_ACTION_SEARCH.
+            val enter = event?.keyCode == KeyEvent.KEYCODE_ENTER
+            if (actionId != EditorInfo.IME_ACTION_SEARCH && !enter) return@setOnEditorActionListener false
             val query = box.text.toString().trim()
-            if (actionId != EditorInfo.IME_ACTION_SEARCH || query.isEmpty()) return@setOnEditorActionListener false
-            open(router.forQuery(query))
+            if (query.isNotEmpty() && (!enter || event.action == KeyEvent.ACTION_DOWN)) open(router.forQuery(query))
             true
         }
         roleRequestButton.setOnClickListener {
@@ -163,6 +164,13 @@ class MainActivity : AppCompatActivity() {
         webView?.loadUrl(url)
     }
 
+    private fun attachWebView(): WebView? {
+        val view = createWebView() ?: return null
+        findViewById<FrameLayout>(R.id.web_container).addView(view)
+        webView = view
+        return view
+    }
+
     private fun createWebView(): WebView? {
         val view = try {
             WebView(this)
@@ -199,13 +207,18 @@ class MainActivity : AppCompatActivity() {
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
             if (!request.isForMainFrame) return false
             val url = request.url.toString()
+            // Upgrading a server redirect back to https could bounce forever on a
+            // site that redirects https to http; let it fail with the cleartext error.
+            if (request.isRedirect && url.startsWith("http:", ignoreCase = true)) return false
             return when (val route = router.route(url)) {
                 is Route.Load -> redirectIfChanged(view, url, route.url)
                 is Route.External -> when (settings.linkPolicy) {
                     LinkPolicy.OPEN_IN_VIEW -> redirectIfChanged(view, url, route.url)
                     LinkPolicy.SHARE_ONLY -> true.also { share(route.url) }
                 }
-                is Route.Handoff -> true.also { handOff(route.uri) }
+                // Like Chrome, only a tap may open another app; otherwise any page
+                // could launch apps or the dialer by script or redirect.
+                is Route.Handoff -> true.also { if (request.hasGesture()) handOff(route.uri) }
                 Route.Blocked -> true
             }
         }
@@ -220,13 +233,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
-            // A dead renderer leaves the WebView unusable; rebuild the activity,
-            // which reloads whatever the current intent asked for.
+            // A dead renderer leaves this WebView unusable, so swap in a new one.
             Log.w(TAG, "WebView renderer gone, crashed=${detail.didCrash()}")
+            val lastUrl = view.url
             (view.parent as? ViewGroup)?.removeView(view)
             view.destroy()
             webView = null
-            recreate()
+            backCallback.isEnabled = false
+            if (attachWebView() == null) {
+                showWebViewMissing()
+            } else if (detail.didCrash() || lastUrl == null) {
+                // Reloading a page that crashed the renderer would just crash it again.
+                showEmpty()
+                toast(R.string.page_crashed)
+            } else {
+                load(lastUrl)
+            }
             return true
         }
 

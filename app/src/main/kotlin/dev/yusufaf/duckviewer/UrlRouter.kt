@@ -28,16 +28,19 @@ class UrlRouter(private val page: ResultsPage) {
     fun route(raw: String): Route = route(raw, depth = 0)
 
     private fun route(raw: String, depth: Int): Route {
-        // Valid URIs never contain a raw space, but pasted or hand-typed links do.
-        val text = raw.trim().replace(" ", "%20").let { if (it.startsWith("//")) "https:$it" else it }
-        val uri = parse(text) ?: return Route.Blocked
+        val text = raw.trim().let { if (it.startsWith("//")) "https:$it" else it }
+        // java.net.URI is stricter than Chromium: it rejects characters such as
+        // space or | that browsers pass through, so parse an escaped copy.
+        val uri = parse(escapeIllegal(text))
+            ?: return if (WEB_URL.containsMatchIn(text)) Route.External(httpsOf(text)) else Route.Blocked
         val scheme = uri.scheme?.lowercase() ?: return Route.Blocked
 
         if (scheme !in WEB_SCHEMES) {
             return if (scheme in BLOCKED_SCHEMES) Route.Blocked else Route.Handoff(text)
         }
-        val host = uri.host?.lowercase() ?: return Route.Blocked
-        val url = if (scheme == "http") "https" + text.substring(scheme.length) else text
+        // Hosts with an underscore are valid on the web but leave URI.host null.
+        val host = (uri.host ?: uri.rawAuthority?.let(::hostOf))?.lowercase() ?: return Route.Blocked
+        val url = httpsOf(text)
 
         if (!isDdgHost(host)) return Route.External(url)
 
@@ -57,6 +60,20 @@ class UrlRouter(private val page: ResultsPage) {
             !isBang(query)
         if (!isWebSearch || page.matches(host, path)) return Route.Load(url)
         return Route.Load(page.url(query!!))
+    }
+
+    private fun httpsOf(url: String): String =
+        if (url.startsWith("http:", ignoreCase = true)) "https" + url.substring(4) else url
+
+    private fun escapeIllegal(text: String): String = buildString {
+        for (c in text) {
+            if (c in ILLEGAL_URI_CHARS) append('%').append("%02X".format(c.code)) else append(c)
+        }
+    }
+
+    private fun hostOf(authority: String): String {
+        val hostPort = authority.substringAfterLast('@')
+        return if (hostPort.startsWith("[")) hostPort.substringBefore(']') + "]" else hostPort.substringBefore(':')
     }
 
     private fun parse(text: String): URI? =
@@ -95,5 +112,7 @@ class UrlRouter(private val page: ResultsPage) {
         val WEB_SCHEMES = setOf("http", "https")
         val BLOCKED_SCHEMES = setOf("javascript", "file", "content", "data", "blob", "about")
         val WHITESPACE = Regex("\\s+")
+        val WEB_URL = Regex("""^https?://[^/?#\s]+""", RegexOption.IGNORE_CASE)
+        const val ILLEGAL_URI_CHARS = " \"<>\\^`{|}"
     }
 }

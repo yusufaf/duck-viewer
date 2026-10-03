@@ -128,6 +128,13 @@ class UrlRouterTest {
     }
 
     @Test
+    fun `urls java's parser rejects but browsers accept still route`() {
+        assertEquals(Route.External("https://my_site.example.com/"), router.route("https://my_site.example.com/"))
+        assertEquals(Route.External("https://example.com/?a=b|c{d}^"), router.route("https://example.com/?a=b|c{d}^"))
+        assertEquals(lite("a%7Cb"), router.route("https://duckduckgo.com/?q=a|b"))
+    }
+
+    @Test
     fun `app schemes are handed off and dangerous schemes blocked`() {
         assertEquals(Route.Handoff("mailto:someone@example.com"), router.route("mailto:someone@example.com"))
         assertEquals(Route.Handoff("tel:+15551234567"), router.route("tel:+15551234567"))
