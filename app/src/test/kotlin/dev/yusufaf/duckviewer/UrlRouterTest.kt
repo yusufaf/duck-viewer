@@ -23,6 +23,12 @@ class UrlRouterTest {
     }
 
     @Test
+    fun `niagara suggestion url becomes lite results`() {
+        // Captured from Niagara Launcher on a real phone (2026-10-03).
+        assertEquals(lite("best+pizza"), router.route("https://duckduckgo.com/?q=best%20pizza&ia=web"))
+    }
+
+    @Test
     fun `ddg subdomain and mixed case host are recognized`() {
         assertEquals(lite("kotlin"), router.route("https://start.duckduckgo.com/?q=kotlin"))
         assertEquals(lite("kotlin"), router.route("https://DuckDuckGo.COM/?q=kotlin"))
