@@ -17,3 +17,7 @@ Thumbs.db
 
 # Agent working notes (never committed)
 .agents/
+
+# Signing keys (never committed)
+*.jks
+*.keystore

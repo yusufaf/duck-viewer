@@ -1,0 +1,5 @@
+<resources>
+    <!-- DayNight sets isLightTheme per mode, which WebView uses for
+         prefers-color-scheme and algorithmic darkening. -->
+    <style name="Theme.DuckViewer" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>

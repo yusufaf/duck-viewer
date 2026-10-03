@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Duck Viewer</string>
+    <string name="search_hint">Search DuckDuckGo</string>
+    <string name="role_explainer">Set Duck Viewer as the default browser so searches and links from your launcher and other apps open here.</string>
+    <string name="role_request">Set as default browser</string>
+    <string name="role_open_settings">Open default apps settings</string>
+    <string name="webview_missing">Android System WebView is missing or disabled. Duck Viewer needs it to show pages.</string>
+    <string name="webview_get">Get Android System WebView</string>
+    <string name="downloads_unsupported">Downloads aren\'t supported</string>
+    <string name="link_blocked">Link blocked</string>
+    <string name="no_app_for_link">No app can open this link</string>
+    <string name="share_link">Share link</string>
+    <string name="page_crashed">The page crashed</string>
+</resources>
