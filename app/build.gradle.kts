@@ -11,7 +11,7 @@ android {
         // RoleManager.ROLE_BROWSER needs API 29.
         minSdk = 29
         targetSdk = 37
-        versionName = "0.1.0" // x-release-please-version
+        versionName = "0.1.1" // x-release-please-version
 
         // release-please bumps versionName; versionCode follows it so a
         // semver bump is always an upgrade on the phone. Only the numeric core
