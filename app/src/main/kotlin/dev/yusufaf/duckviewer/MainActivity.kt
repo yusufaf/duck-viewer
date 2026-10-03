@@ -192,6 +192,7 @@ class MainActivity : AppCompatActivity() {
         if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
             WebSettingsCompat.setAlgorithmicDarkeningAllowed(view.settings, true)
         }
+        ResultsPageStyle.install(view)
         view.setDownloadListener { _, _, _, _, _ -> toast(R.string.downloads_unsupported) }
         view.webViewClient = Client()
         view.webChromeClient = object : WebChromeClient() {

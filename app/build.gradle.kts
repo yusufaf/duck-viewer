@@ -20,6 +20,8 @@ android {
             .find(versionName!!)!!.destructured.toList().map(String::toInt)
         // 0.0.0 is the unreleased placeholder; Android rejects versionCode 0.
         versionCode = maxOf(major * 10_000 + minor * 100 + patch, 1)
+
+        manifestPlaceholders["appLabel"] = "@string/app_name"
     }
 
     // The release key comes from CI secrets (see README). Without it the release
@@ -38,6 +40,12 @@ android {
     }
 
     buildTypes {
+        // Installs next to the release app, so testing a debug build never
+        // replaces the signed install or its default-browser role.
+        debug {
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["appLabel"] = "Duck Viewer (debug)"
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
