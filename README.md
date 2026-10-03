@@ -50,6 +50,8 @@ To build a signed release locally, set `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KE
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
 
+The debug build installs as a separate app, `dev.yusufaf.duckviewer.debug` ("Duck Viewer (debug)"), next to the release one, so testing never replaces the signed install or its default-browser role. To send it an intent directly, add `-n dev.yusufaf.duckviewer.debug/dev.yusufaf.duckviewer.MainActivity` to the `adb shell am start` commands below.
+
 CI builds every PR and push to `main`. Releases come from release-please; each release attaches the signed APK.
 
 ## Testing with adb
