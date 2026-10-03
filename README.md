@@ -33,7 +33,7 @@ Each release must be signed with the same key, or Android refuses to install it 
 
 ```powershell
 keytool -genkeypair -v -keystore duck-viewer.jks -alias duckviewer -keyalg RSA -keysize 4096 -validity 36500
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("duck-viewer.jks")) | gh secret set KEYSTORE_BASE64 -R yusufaf/duck-viewer
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("$PWD\duck-viewer.jks")) | gh secret set KEYSTORE_BASE64 -R yusufaf/duck-viewer
 gh secret set KEYSTORE_PASSWORD -R yusufaf/duck-viewer
 gh secret set KEY_ALIAS -R yusufaf/duck-viewer --body duckviewer
 gh secret set KEY_PASSWORD -R yusufaf/duck-viewer
