@@ -28,6 +28,7 @@
         android:contentDescription="@string/share_page"
         android:elevation="6dp"
         android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="center"
         android:src="@drawable/ic_share"
         android:visibility="gone" />
 

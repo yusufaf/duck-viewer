@@ -4,7 +4,7 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.net.URLDecoder
 
-/** An http(s) url with a non-empty host. Shared by routing and sharing so they agree on what a web page is. */
+/** An http(s) url with a non-empty authority. Shared by UrlRouter and shareContent so they agree on what a web page is. */
 internal val WEB_URL = Regex("""^https?://[^/?#\s]+""", RegexOption.IGNORE_CASE)
 
 sealed interface Route {

@@ -91,6 +91,28 @@ class ShareContentTest {
     }
 
     @Test
+    fun `title survives in-page fragment navigation`() {
+        assertEquals(
+            ShareContent("https://example.com/a#history", "Page A"),
+            shareContent("https://example.com/a#history", "Page A", titleUrl = "https://example.com/a"),
+        )
+    }
+
+    @Test
+    fun `credentials are stripped from the shared url`() {
+        assertEquals(
+            ShareContent("https://intranet.example/a", "Wiki"),
+            shareContent("https://admin:secret@intranet.example/a", "Wiki", titleUrl = "https://admin:secret@intranet.example/a"),
+        )
+        assertEquals(ShareContent("http://example.com/", null), shareContent("http://user@example.com/", null))
+    }
+
+    @Test
+    fun `userinfo without a host is not shareable`() {
+        assertNull(shareContent("http://user@/", null))
+    }
+
+    @Test
     fun `url is trimmed`() {
         assertEquals(ShareContent("https://example.com/", null), shareContent(" https://example.com/ ", null))
     }
