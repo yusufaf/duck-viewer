@@ -108,6 +108,31 @@ class ShareContentTest {
     }
 
     @Test
+    fun `untitled page reporting its raw url as title leaks no credentials`() {
+        val raw = "https://admin:secret@intranet.example/a"
+        assertEquals(ShareContent("https://intranet.example/a", null), shareContent(raw, raw))
+    }
+
+    @Test
+    fun `url-as-title is still dropped after a fragment change`() {
+        assertEquals(
+            ShareContent("https://example.com/a#history", null),
+            shareContent("https://example.com/a#history", "https://example.com/a", titleUrl = "https://example.com/a"),
+        )
+    }
+
+    @Test
+    fun `userinfo is stripped through the last at sign`() {
+        assertEquals(ShareContent("https://host.example/", null), shareContent("https://user:p@ss@host.example/", null))
+    }
+
+    @Test
+    fun `backslash is never treated as part of userinfo`() {
+        val url = "https://evil.example\\@good.example/x"
+        assertEquals(ShareContent(url, null), shareContent(url, null))
+    }
+
+    @Test
     fun `userinfo without a host is not shareable`() {
         assertNull(shareContent("http://user@/", null))
     }
