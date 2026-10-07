@@ -1,9 +1,6 @@
 package dev.yusufaf.duckviewer
 
-data class ShareContent(val url: String, val title: String?) {
-    /** Most share targets read only EXTRA_TEXT, so the title has to travel inside it. */
-    val text: String get() = if (title == null) url else "$title\n$url"
-}
+data class ShareContent(val url: String, val title: String?)
 
 private val WEB_URL = Regex("^https?://[^\\s/?#]+", RegexOption.IGNORE_CASE)
 

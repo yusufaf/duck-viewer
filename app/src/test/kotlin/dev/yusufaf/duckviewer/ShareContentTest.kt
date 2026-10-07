@@ -67,16 +67,6 @@ class ShareContentTest {
     }
 
     @Test
-    fun `share text puts the title above the url`() {
-        assertEquals("Example\nhttps://example.com/", ShareContent("https://example.com/", "Example").text)
-    }
-
-    @Test
-    fun `share text is the bare url without a title`() {
-        assertEquals("https://example.com/", ShareContent("https://example.com/", null).text)
-    }
-
-    @Test
     fun `url is trimmed`() {
         assertEquals(ShareContent("https://example.com/", null), shareContent(" https://example.com/ ", null))
     }
