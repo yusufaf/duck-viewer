@@ -67,6 +67,30 @@ class ShareContentTest {
     }
 
     @Test
+    fun `title reported for another url is dropped`() {
+        assertEquals(
+            ShareContent("https://example.com/b", null),
+            shareContent("https://example.com/b", "Page A", titleUrl = "https://example.com/a"),
+        )
+    }
+
+    @Test
+    fun `title reported for this url is kept`() {
+        assertEquals(
+            ShareContent("https://example.com/b", "Page B"),
+            shareContent("https://example.com/b", "Page B", titleUrl = "https://example.com/b"),
+        )
+    }
+
+    @Test
+    fun `title with no known url is dropped`() {
+        assertEquals(
+            ShareContent("https://example.com/b", null),
+            shareContent("https://example.com/b", "Page B", titleUrl = null),
+        )
+    }
+
+    @Test
     fun `url is trimmed`() {
         assertEquals(ShareContent("https://example.com/", null), shareContent(" https://example.com/ ", null))
     }

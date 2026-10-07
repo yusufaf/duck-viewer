@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var role: BrowserRole
 
     private var webView: WebView? = null
+    private var pageTitle: String? = null
+    private var pageTitleUrl: String? = null
     private lateinit var progress: ProgressBar
     private lateinit var emptyState: View
     private lateinit var shareButton: View
@@ -203,6 +205,11 @@ class MainActivity : AppCompatActivity() {
                 progress.progress = newProgress
                 progress.isVisible = newProgress < 100
             }
+
+            override fun onReceivedTitle(view: WebView, title: String?) {
+                pageTitle = title
+                pageTitleUrl = view.url
+            }
         }
         return view
     }
@@ -294,16 +301,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun share(url: String, title: String? = null) {
+    private fun share(url: String, title: String? = null, chooserTitle: Int = R.string.share_link) {
         val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, url)
         if (title != null) send.putExtra(Intent.EXTRA_SUBJECT, title).putExtra(Intent.EXTRA_TITLE, title)
-        startSafely(Intent.createChooser(send, getString(R.string.share_link)))
+        startSafely(Intent.createChooser(send, getString(chooserTitle)))
     }
 
     private fun sharePage() {
-        // WebView.title lags the url while a page loads, so share the url alone until it finishes.
-        val page = shareContent(webView?.url, webView?.title?.takeUnless { progress.isVisible })
-        if (page == null) toast(R.string.nothing_to_share) else share(page.url, page.title)
+        val page = shareContent(webView?.url, pageTitle, pageTitleUrl)
+        if (page == null) toast(R.string.nothing_to_share) else share(page.url, page.title, R.string.share_page)
     }
 
     private fun startSafely(intent: Intent) {

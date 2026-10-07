@@ -4,6 +4,9 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.net.URLDecoder
 
+/** An http(s) url with a non-empty host. Shared by routing and sharing so they agree on what a web page is. */
+internal val WEB_URL = Regex("""^https?://[^/?#\s]+""", RegexOption.IGNORE_CASE)
+
 sealed interface Route {
     /** A DuckDuckGo page; always shown in the view. */
     data class Load(val url: String) : Route
@@ -112,7 +115,6 @@ class UrlRouter(private val page: ResultsPage) {
         val WEB_SCHEMES = setOf("http", "https")
         val BLOCKED_SCHEMES = setOf("javascript", "file", "content", "data", "blob", "about")
         val WHITESPACE = Regex("\\s+")
-        val WEB_URL = Regex("""^https?://[^/?#\s]+""", RegexOption.IGNORE_CASE)
         const val ILLEGAL_URI_CHARS = " \"<>\\^`{|}"
     }
 }
