@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     private var webView: WebView? = null
     private lateinit var progress: ProgressBar
     private lateinit var emptyState: View
+    private lateinit var shareButton: View
     private lateinit var roleCard: View
     private lateinit var roleRequestButton: Button
     private lateinit var roleSettingsButton: Button
@@ -77,6 +78,7 @@ class MainActivity : AppCompatActivity() {
         }
         progress = findViewById(R.id.progress)
         emptyState = findViewById(R.id.empty_state)
+        shareButton = findViewById(R.id.share_button)
         roleCard = findViewById(R.id.role_card)
         roleRequestButton = findViewById(R.id.role_request)
         roleSettingsButton = findViewById(R.id.role_settings)
@@ -102,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         roleSettingsButton.setOnClickListener {
             startSafely(role.settingsIntent())
         }
+        shareButton.setOnClickListener { sharePage() }
 
         if (savedInstanceState == null || view.restoreState(savedInstanceState) == null) {
             handle(intent)
@@ -291,9 +294,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun share(url: String) {
+    private fun share(url: String, title: String? = null) {
         val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, url)
+        if (title != null) send.putExtra(Intent.EXTRA_SUBJECT, title).putExtra(Intent.EXTRA_TITLE, title)
         startSafely(Intent.createChooser(send, getString(R.string.share_link)))
+    }
+
+    private fun sharePage() {
+        val page = shareContent(webView?.url, webView?.title)
+        if (page == null) toast(R.string.nothing_to_share) else share(page.url, page.title)
     }
 
     private fun startSafely(intent: Intent) {
@@ -306,17 +315,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun showWeb() {
         emptyState.isVisible = false
+        shareButton.isVisible = true
         webView?.isVisible = true
     }
 
     private fun showEmpty() {
         webView?.isVisible = false
+        shareButton.isVisible = false
         emptyState.isVisible = true
         refreshRoleCard()
     }
 
     private fun showWebViewMissing() {
         emptyState.isVisible = false
+        shareButton.isVisible = false
         findViewById<View>(R.id.webview_missing).isVisible = true
         findViewById<Button>(R.id.webview_get).setOnClickListener {
             startSafely(Intent(Intent.ACTION_VIEW, WEBVIEW_PLAY_URL.toUri()))
