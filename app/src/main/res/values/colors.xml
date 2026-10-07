@@ -1,3 +1,4 @@
 <resources>
     <color name="icon_background">#DE5833</color>
+    <color name="share_button_bg">#CC202020</color>
 </resources>
