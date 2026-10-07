@@ -2,7 +2,7 @@ package dev.yusufaf.duckviewer
 
 data class ShareContent(val url: String, val title: String?)
 
-private val WEB_URL = Regex("^https?://[^\\s/]+", RegexOption.IGNORE_CASE)
+private val WEB_URL = Regex("^https?://[^\\s/?#]+", RegexOption.IGNORE_CASE)
 
 /** Only web pages are worth sharing; about:, data:, javascript: and the like are not. */
 fun shareContent(url: String?, title: String?): ShareContent? {

@@ -301,7 +301,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sharePage() {
-        val page = shareContent(webView?.url, webView?.title)
+        // WebView.title lags the url while a page loads, so share the url alone until it finishes.
+        val page = shareContent(webView?.url, webView?.title?.takeUnless { progress.isVisible })
         if (page == null) toast(R.string.nothing_to_share) else share(page.url, page.title)
     }
 

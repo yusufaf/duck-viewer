@@ -32,6 +32,8 @@ class ShareContentTest {
             "file:///sdcard/a.html",
             "intent://x#Intent;end",
             "https://",
+            "https://?q=1",
+            "http://#frag",
         ).forEach { assertNull(it, shareContent(it, "Title")) }
     }
 
