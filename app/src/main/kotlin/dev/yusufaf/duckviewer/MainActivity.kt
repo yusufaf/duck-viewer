@@ -294,8 +294,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun share(url: String, title: String? = null) {
-        val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, url)
+    private fun share(text: String, title: String? = null) {
+        val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
         if (title != null) send.putExtra(Intent.EXTRA_SUBJECT, title).putExtra(Intent.EXTRA_TITLE, title)
         startSafely(Intent.createChooser(send, getString(R.string.share_link)))
     }
@@ -303,7 +303,7 @@ class MainActivity : AppCompatActivity() {
     private fun sharePage() {
         // WebView.title lags the url while a page loads, so share the url alone until it finishes.
         val page = shareContent(webView?.url, webView?.title?.takeUnless { progress.isVisible })
-        if (page == null) toast(R.string.nothing_to_share) else share(page.url, page.title)
+        if (page == null) toast(R.string.nothing_to_share) else share(page.text, page.title)
     }
 
     private fun startSafely(intent: Intent) {
