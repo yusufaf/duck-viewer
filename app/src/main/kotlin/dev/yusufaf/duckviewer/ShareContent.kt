@@ -2,7 +2,7 @@ package dev.yusufaf.duckviewer
 
 data class ShareContent(val url: String, val title: String?)
 
-/** Userinfo runs to the last '@' of the authority, as in UrlRouter.hostOf; a backslash ends the authority. */
+/** Userinfo runs to the last '@' of the authority. A backslash ends the authority, as Chromium treats it as '/'. */
 private val USER_INFO = Regex("""^(https?://)[^/?#\\\s]*@""", RegexOption.IGNORE_CASE)
 
 private fun String.normalized() = trim().replaceFirst(USER_INFO, "$1")
