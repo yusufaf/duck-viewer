@@ -1,8 +1,8 @@
 # Duck Viewer
 
-Shows DuckDuckGo search results on an Android phone that has no web browser installed.
+Shows DuckDuckGo search results on an Android phone that has no web browser installed, so web search suggestions in [Niagara Launcher](https://niagaralauncher.com/) open instead of doing nothing.
 
-**Status: early development.**
+**Status:** working. Signed APKs are on the [releases page](https://github.com/yusufaf/duck-viewer/releases).
 
 ## Why
 
@@ -20,28 +20,18 @@ Searches with bangs (`!w kotlin`) and image, news, or video searches go to the f
 
 ## Install
 
-1. Download `duck-viewer-<version>.apk` from the [latest release](https://github.com/yusufaf/duck-viewer/releases/latest) on the phone.
+[<img src="docs/badge_obtainium.png" alt="Get it on Obtainium" height="48">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/yusufaf/duck-viewer)
+
+[Obtainium](https://github.com/ImranR98/Obtainium) installs it from this repo's releases and checks for updates. Then continue from step 3 below.
+
+To install by hand:
+
+1. Download `duck-viewer-v<version>.apk` from the [latest release](https://github.com/yusufaf/duck-viewer/releases/latest) on the phone.
 2. Allow your Files app to install unknown apps when prompted.
 3. Open Duck Viewer once and accept the default browser prompt. If there's no prompt, use the button to open Settings > Default apps.
 4. In Niagara, turn on Settings > Smart Search > Web Search Suggestions with DuckDuckGo selected.
 
 Keep Android System WebView enabled and updated from the Play Store.
-
-## Release signing (one-time setup)
-
-Each release must be signed with the same key, or Android refuses to install it over the previous version. Generate the key once and store it as repository secrets:
-
-```powershell
-keytool -genkeypair -v -keystore duck-viewer.jks -alias duckviewer -keyalg RSA -keysize 4096 -validity 36500
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("$PWD\duck-viewer.jks")) | gh secret set KEYSTORE_BASE64 -R yusufaf/duck-viewer
-gh secret set KEYSTORE_PASSWORD -R yusufaf/duck-viewer
-gh secret set KEY_ALIAS -R yusufaf/duck-viewer --body duckviewer
-gh secret set KEY_PASSWORD -R yusufaf/duck-viewer
-```
-
-Back up `duck-viewer.jks` and its passwords somewhere safe, outside the repo. If the key is lost, the next version can only be installed after uninstalling the old one.
-
-To build a signed release locally, set `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KEY_ALIAS` and `KEY_PASSWORD` in the environment. Without them, `assembleRelease` produces an unsigned APK.
 
 ## Building
 
@@ -52,7 +42,7 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 
 The debug build installs as a separate app, `dev.yusufaf.duckviewer.debug` ("Duck Viewer (debug)"), next to the release one, so testing never replaces the signed install or its default-browser role. To send it an intent directly, add `-n dev.yusufaf.duckviewer.debug/dev.yusufaf.duckviewer.MainActivity` to the `adb shell am start` commands below.
 
-CI builds every PR and push to `main`. Releases come from release-please; each release attaches the signed APK.
+CI builds every PR and push to `main`. Releases come from release-please; each release attaches the signed APK. Signing setup for maintainers is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Testing with adb
 
