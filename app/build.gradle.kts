@@ -24,9 +24,9 @@ android {
         manifestPlaceholders["appLabel"] = "@string/app_name"
     }
 
-    // The release key comes from CI secrets (see README). Without it the release
-    // APK is left unsigned rather than falling back to a debug key, which would
-    // produce an APK that can't update the installed one.
+    // The release key comes from CI secrets (see CONTRIBUTING.md). Without it
+    // the release APK is left unsigned rather than falling back to a debug key,
+    // which would produce an APK that can't update the installed one.
     val keystoreFile = System.getenv("KEYSTORE_FILE")
     if (keystoreFile != null) {
         signingConfigs {

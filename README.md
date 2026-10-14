@@ -26,7 +26,7 @@ Searches with bangs (`!w kotlin`) and image, news, or video searches go to the f
 
 To install by hand:
 
-1. Download `duck-viewer-<version>.apk` from the [latest release](https://github.com/yusufaf/duck-viewer/releases/latest) on the phone.
+1. Download `duck-viewer-v<version>.apk` from the [latest release](https://github.com/yusufaf/duck-viewer/releases/latest) on the phone.
 2. Allow your Files app to install unknown apps when prompted.
 3. Open Duck Viewer once and accept the default browser prompt. If there's no prompt, use the button to open Settings > Default apps.
 4. In Niagara, turn on Settings > Smart Search > Web Search Suggestions with DuckDuckGo selected.
